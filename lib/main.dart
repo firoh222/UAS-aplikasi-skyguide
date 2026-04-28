@@ -7,15 +7,14 @@ class SkyGuide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: LoginPage(),
-    );
+    return MaterialApp(debugShowCheckedModeBanner: false, home: LoginPage());
   }
 }
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
+
+  final TextEditingController nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +34,10 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            // Input Nama (Syarat Pendaftaran Simpel dari Dosen)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: TextField(
+                controller: nameController,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
@@ -52,7 +51,8 @@ class LoginPage extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Minggu depan kita buat ini bisa pindah halaman
+                // Nanti kodingan pindah halaman (Minggu 2) ditaruh di sini
+                print("Nama yang diinput: ${nameController.text}");
               },
               child: const Text("Masuk"),
             ),
