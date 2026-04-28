@@ -52,10 +52,44 @@ class LoginPage extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // Nanti kodingan pindah halaman (Minggu 2) ditaruh di sini
-                print("Nama yang diinput: ${nameController.text}");
+                if (nameController.text.isNotEmpty) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          DashboardPage(namaUser: nameController.text),
+                    ),
+                  );
+                }
               },
               child: const Text("Masuk"),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DashboardPage extends StatelessWidget {
+  final String namaUser;
+  const DashboardPage({super.key, required this.namaUser});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("SkyGuide Dashboard")),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Halo, $namaUser!", style: const TextStyle(fontSize: 22)),
+            const Icon(Icons.wb_sunny, size: 100, color: Colors.orange),
+            const Text(
+              "32°C",
+              style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+            ),
+            const Text("Cerah Berawan"),
           ],
         ),
       ),
