@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 void main() => runApp(const SkyGuide());
 
@@ -57,7 +59,7 @@ class LoginPage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          DashboardPage(namaUser: nameController.text),
+                          DashboardRealtimePage(namaUser: nameController.text),
                     ),
                   );
                 }
@@ -90,6 +92,81 @@ class DashboardPage extends StatelessWidget {
               style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
             ),
             const Text("Cerah Berawan"),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DashboardRealtimePage extends StatefulWidget {
+  final String namaUser;
+  const DashboardRealtimePage({super.key, required this.namaUser});
+
+  @override
+  State<DashboardRealtimePage> createState() => _DashboardRealTimePageState();
+}
+
+class _DashboardRealTimePageState extends State<DashboardRealtimePage> {
+  String suhu = "...";
+  String kondisi = "Mengambil data...";
+
+  Future<void> ambilDataCuaca() async {
+    // koordinat Pamekasan: -7.15, 113.48
+    final url = Uri.parse(
+      "https://api.open-meteo.com/v1/forecast?latitude=-7.15&longitude=113.48&current_weather=true",
+    );
+
+    try {
+      final respon = await http.get(url);
+      if (respon.statusCode == 200) {
+        final data = jsonDecode(respon.body);
+        setState(() {
+          suhu = "${data['current_weather']['temperature']}°C";
+          kondisi = "Cerah Berawan";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        kondisi = "Gagal mengambil data";
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    ambilDataCuaca();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("SkyGuide Real-Time"),
+        backgroundColor: Colors.blueAccent,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Halo, ${widget.namaUser}!",
+              style: const TextStyle(fontSize: 22),
+            ),
+            const SizedBox(height: 20),
+            const Icon(Icons.cloud_queue, size: 100, color: Colors.blue),
+            Text(
+              suhu,
+              style: const TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
+            ),
+            Text(kondisi, style: const TextStyle(fontSize: 20)),
+            const SizedBox(height: 30),
+            ElevatedButton.icon(
+              onPressed: ambilDataCuaca,
+              icon: const Icon(Icons.refresh),
+              label: const Text("Update Cuaca"),
+            ),
           ],
         ),
       ),
