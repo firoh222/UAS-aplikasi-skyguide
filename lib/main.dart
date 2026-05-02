@@ -174,7 +174,6 @@ class _DashboardRealTimePageState extends State<DashboardRealtimePage> {
   }
 }
 
-// --- MINGGU 4: VERSI FINAL DENGAN UI DINAMIS ---
 class DashboardFinalPage extends StatefulWidget {
   final String namaUser;
   const DashboardFinalPage({super.key, required this.namaUser});
@@ -186,23 +185,36 @@ class DashboardFinalPage extends StatefulWidget {
 class _DashboardFinalPageState extends State<DashboardFinalPage> {
   String suhu = "...";
   String kondisi = "Memuat data...";
+  // Tambahkan controller untuk menangkap ketikan nama kota
+  final TextEditingController _kotaController = TextEditingController();
 
-  // Logika Ikon Dinamis
+  // 1. LOGIKA SARAN ASLI (Dinamis sesuai suhu)
+  String ambilSaran(String suhuTeks) {
+    double nilaiSuhu = double.tryParse(suhuTeks.replaceAll('°C', '')) ?? 0;
+    if (nilaiSuhu > 30)
+      return "Cuaca panas! Jangan lupa minum air putih dan pakai sunblock.";
+    if (nilaiSuhu > 20)
+      return "Cuaca sangat nyaman untuk jalan-jalan atau olahraga!";
+    if (nilaiSuhu == 0) return "Menunggu data...";
+    return "Cuaca dingin, pastikan pakai jaket yaaa!";
+  }
+
   IconData ambilIkon(String teksKondisi) {
     if (teksKondisi.contains("Cerah")) return Icons.wb_sunny;
     if (teksKondisi.contains("Hujan")) return Icons.thunderstorm;
     return Icons.cloud;
   }
 
-  // Logika Warna Dinamis
   Color ambilWarna(String suhuTeks) {
     double nilaiSuhu = double.tryParse(suhuTeks.replaceAll('°C', '')) ?? 0;
     return nilaiSuhu > 30 ? Colors.orangeAccent : Colors.lightBlueAccent;
   }
 
+  // 2. FUNGSI AMBIL DATA CUACA
   Future<void> ambilDataCuaca() async {
+    // Latitude & Longitude Pamekasan (Default)
     final url = Uri.parse(
-      "https://api.open-metao.com/v1/forecast?latitude=-7.15&longitude=113.48&current_weather=true",
+      "https://api.open-meteo.com/v1/forecast?latitude=-7.15&longitude=113.48&current_weather=true",
     );
     try {
       final respon = await http.get(url);
@@ -215,8 +227,8 @@ class _DashboardFinalPageState extends State<DashboardFinalPage> {
       }
     } catch (e) {
       setState(() {
-        suhu = "29°C";
-        kondisi = " Cerah Berawan";
+        suhu = "29°C"; // Cadangan jika internet bermasalah
+        kondisi = "Cerah Berawan";
       });
     }
   }
@@ -230,27 +242,45 @@ class _DashboardFinalPageState extends State<DashboardFinalPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ambilWarna(suhu), // Warna background dinamis!
+      backgroundColor: ambilWarna(suhu),
       appBar: AppBar(
-        title: const Text("SkyGuide Final"),
+        title: const Text("SkyGuide v0.4"),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Center(
+      body: SingleChildScrollView(
+        // Agar tidak error saat keyboard muncul
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              "Halo, ${widget.namaUser}!",
-              style: const TextStyle(
-                fontSize: 24,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+            const SizedBox(height: 20),
+            // 3. FITUR PENCARIAN (Ketik Manual Bagian Ini)
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 25),
+              child: TextField(
+                controller: _kotaController,
+                style: TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: "Masukkan nama kota...",
+                  hintStyle: TextStyle(color: Colors.white70),
+                  prefixIcon: Icon(Icons.search, color: Colors.white),
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.2),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                onSubmitted: (value) =>
+                    ambilDataCuaca(), // Berfungsi saat tekan enter
               ),
             ),
-            const SizedBox(height: 20),
-            Icon(ambilIkon(kondisi), size: 120, color: Colors.white),
+            const SizedBox(height: 40),
+            Text(
+              "Halo, ${widget.namaUser}!",
+              style: const TextStyle(fontSize: 22, color: Colors.white),
+            ),
             const SizedBox(height: 10),
+            Icon(ambilIkon(kondisi), size: 100, color: Colors.white),
             Text(
               suhu,
               style: const TextStyle(
@@ -261,17 +291,35 @@ class _DashboardFinalPageState extends State<DashboardFinalPage> {
             ),
             Text(
               kondisi,
-              style: const TextStyle(fontSize: 24, color: Colors.white70),
+              style: const TextStyle(fontSize: 22, color: Colors.white70),
             ),
-            const SizedBox(height: 50),
-            ElevatedButton.icon(
-              onPressed: ambilDataCuaca,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: ambilWarna(suhu),
+
+            const SizedBox(height: 30),
+            // 4. TAMPILAN SARAN AKTIVITAS (Logika Asli)
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 25),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(20),
               ),
-              icon: const Icon(Icons.refresh),
-              label: const Text("Cek Cuaca Terbaru"),
+              child: Column(
+                children: [
+                  const Text(
+                    "💡 Saran Aktivitas:",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    ambilSaran(suhu),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
