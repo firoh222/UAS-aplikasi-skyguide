@@ -141,6 +141,34 @@ class _DashboardRealTimePageState extends State<DashboardRealtimePage> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> hari = [
+      "Senin",
+      "Selasa",
+      "Rabu",
+      "Rabu",
+      "Kamis",
+      "Jumat",
+      "Sabtu",
+      "Minggu",
+    ];
+    List<String> bulan = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ];
+    DateTime waktu = DateTime.now();
+    String tanggalLengkap =
+        "${hari[waktu.weekday - 1]}, ${waktu.day} ${bulan[waktu.month - 1]} ${waktu.year}";
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("SkyGuide Real-Time"),
@@ -154,6 +182,7 @@ class _DashboardRealTimePageState extends State<DashboardRealtimePage> {
               "Halo, ${widget.namaUser}!",
               style: const TextStyle(fontSize: 22),
             ),
+            Text(tanggalLengkap, style: const TextStyle(fontSize: 16)),
             const SizedBox(height: 20),
             const Icon(Icons.cloud_queue, size: 100, color: Colors.blue),
             Text(
@@ -241,6 +270,34 @@ class _DashboardFinalPageState extends State<DashboardFinalPage> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> hari = [
+      "Senin",
+      "Selasa",
+      "Rabu",
+      "Rabu",
+      "Kamis",
+      "Jumat",
+      "Sabtu",
+      "Minggu",
+    ];
+    List<String> bulan = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ];
+    DateTime waktu = DateTime.now();
+    String tanggalLengkap =
+        "${hari[waktu.weekday - 1]}, ${waktu.day} ${bulan[waktu.month - 1]} ${waktu.year}";
+
     return Scaffold(
       backgroundColor: ambilWarna(suhu),
       appBar: AppBar(
@@ -278,6 +335,10 @@ class _DashboardFinalPageState extends State<DashboardFinalPage> {
             Text(
               "Halo, ${widget.namaUser}!",
               style: const TextStyle(fontSize: 22, color: Colors.white),
+            ),
+            Text(
+              tanggalLengkap,
+              style: const TextStyle(fontSize: 16, color: Colors.white70),
             ),
             const SizedBox(height: 10),
             Icon(ambilIkon(kondisi), size: 100, color: Colors.white),
