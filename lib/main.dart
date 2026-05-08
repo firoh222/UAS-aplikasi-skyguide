@@ -211,9 +211,13 @@ class DashboardFinalPage extends StatefulWidget {
   State<DashboardFinalPage> createState() => _DashboardFinalPageState();
 }
 
-class _DashboardFinalPageState extends State<DashboardFinalPage> {
+class _DashboardFinalPageState extends State<DashboardFinalPage>
+    with SingleTickerProviderStateMixin {
   String suhu = "...";
   String kondisi = "Memuat data...";
+  double ukuranIkon = 100;
+  late AnimationController _controller;
+  late Animation<double> _animation;
   // Tambahkan controller untuk menangkap ketikan nama kota
   final TextEditingController _kotaController = TextEditingController();
 
@@ -273,6 +277,20 @@ class _DashboardFinalPageState extends State<DashboardFinalPage> {
   void initState() {
     super.initState();
     ambilDataCuaca();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+    _animation = Tween<double>(
+      begin: 100,
+      end: 115,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -316,7 +334,7 @@ class _DashboardFinalPageState extends State<DashboardFinalPage> {
         // Agar tidak error saat keyboard muncul
         child: Column(
           children: [
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             // 3. FITUR PENCARIAN (Ketik Manual Bagian Ini)
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 25),
@@ -338,7 +356,7 @@ class _DashboardFinalPageState extends State<DashboardFinalPage> {
                     ambilDataCuaca(), // Berfungsi saat tekan enter
               ),
             ),
-            const SizedBox(height: 40),
+            SizedBox(height: 40),
             Text(
               "Halo, ${widget.namaUser}!",
               style: const TextStyle(fontSize: 22, color: Colors.white),
@@ -347,8 +365,17 @@ class _DashboardFinalPageState extends State<DashboardFinalPage> {
               tanggalLengkap,
               style: const TextStyle(fontSize: 16, color: Colors.white70),
             ),
-            const SizedBox(height: 10),
-            Icon(ambilIkon(kondisi), size: 100, color: Colors.white),
+            SizedBox(height: 10),
+            AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) {
+                return Icon(
+                  ambilIkon(kondisi),
+                  size: _animation.value,
+                  color: Colors.white,
+                );
+              },
+            ),
             Text(
               suhu,
               style: const TextStyle(
