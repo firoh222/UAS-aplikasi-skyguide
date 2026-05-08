@@ -262,6 +262,13 @@ class _DashboardFinalPageState extends State<DashboardFinalPage> {
     }
   }
 
+  Color tentukanWarnaWaktu() {
+    int jam = DateTime.now().hour;
+    if (jam >= 5 && jam < 15) return Colors.lightBlueAccent;
+    if (jam >= 15 && jam < 18) return Colors.orangeAccent;
+    return const Color(0xFF1A23E);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -299,7 +306,7 @@ class _DashboardFinalPageState extends State<DashboardFinalPage> {
         "${hari[waktu.weekday - 1]}, ${waktu.day} ${bulan[waktu.month - 1]} ${waktu.year}";
 
     return Scaffold(
-      backgroundColor: ambilWarna(suhu),
+      backgroundColor: tentukanWarnaWaktu(),
       appBar: AppBar(
         title: const Text("SkyGuide v0.4"),
         backgroundColor: Colors.transparent,
