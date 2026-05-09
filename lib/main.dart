@@ -270,7 +270,7 @@ class _DashboardFinalPageState extends State<DashboardFinalPage>
     int jam = DateTime.now().hour;
     if (jam >= 5 && jam < 15) return Colors.lightBlueAccent;
     if (jam >= 15 && jam < 18) return Colors.orangeAccent;
-    return const Color(0xFF1A23E);
+    return const Color(0xFF1A237E);
   }
 
   @override
@@ -446,8 +446,55 @@ class _DashboardFinalPageState extends State<DashboardFinalPage>
                 ],
               ),
             ),
-          ],
-        ),
+            const SizedBox(height: 15),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              child: Row(
+                children: [
+                  _itemRamalan("Sen", Icons.wb_sunny, "29°"),
+                  _itemRamalan("Sel", Icons.cloud, "27°"),
+                  _itemRamalan("Rab", Icons.water_drop, "25°"),
+                  _itemRamalan("Kam", Icons.thunderstorm, "24"),
+                  _itemRamalan("jum", Icons.wb_cloudy, "26°"),
+                  _itemRamalan("Sab", Icons.cloud_queue, "28°"),
+                  _itemRamalan("Min", Icons.wb_sunny, "30°"),
+                ],
+              ),
+            ), // Baris 464: Penutup SingleChildScrollView (Ramalan)
+          ], // Baris 465: Penutup Column Utama
+        ), // Baris 466: Penutup SingleChildScrollView (Layar Utama)
+      ), // Baris 467: Penutup Container (BACKGROUND WARNA BALIK!)
+    ); // Baris 468: Penutup Scaffold
+  } // Baris 469: Penutup fungsi build
+
+  Widget _itemRamalan(String hari, IconData ikon, String suhu) {
+    return Container(
+      margin: const EdgeInsets.only(right: 15),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 18),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
+      ),
+      child: Column(
+        children: [
+          Text(
+            hari,
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
+          ),
+          const SizedBox(height: 12),
+          Icon(ikon, color: Colors.white, size: 30),
+          const SizedBox(height: 12),
+          Text(
+            suhu,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }
