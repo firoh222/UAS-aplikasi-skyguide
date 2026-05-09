@@ -400,10 +400,18 @@ class _DashboardFinalPageState extends State<DashboardFinalPage>
             ),
             Text(
               suhu,
-              style: const TextStyle(
-                fontSize: 70,
+              style: TextStyle(
+                fontSize: 80,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
+                letterSpacing: -2,
+                shadows: [
+                  Shadow(
+                    blurRadius: 20,
+                    color: Colors.black26,
+                    offset: Offset(0, 10),
+                  ),
+                ],
               ),
             ),
             Text(
