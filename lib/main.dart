@@ -376,6 +376,28 @@ class _DashboardFinalPageState extends State<DashboardFinalPage>
                 );
               },
             ),
+            AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) {
+                return Opacity(
+                  opacity: (_animation.value - 100) / 15,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      5,
+                      (index) => const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Icon(
+                          Icons.circle,
+                          size: 4,
+                          color: Colors.white54,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
             Text(
               suhu,
               style: const TextStyle(
