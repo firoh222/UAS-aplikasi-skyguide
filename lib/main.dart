@@ -256,28 +256,37 @@ class _DashboardFinalPageState extends State<DashboardFinalPage>
   }
 
   // 2. FUNGSI AMBIL DATA CUACA
-  Future<void> ambilDataCuaca() async {
-    final url = Uri.parse(
-      "https://api.open-meteo.com/v1/forecast?latitude=-7.15&longitude=113.48&current_weather=true&daily=temperature_2m_max&timezone=auto",
-    );
-
+  Future<void> ambilDataCuaca(String namaKota) async {
     try {
-      final respon = await http.get(url);
-      if (respon.statusCode == 200) {
-        final data = jsonDecode(respon.body);
-        setState(() {
-          suhu = "${data['current_weather']['temperature']}°C";
-          int kode = data['current_weather']['weathercode'];
-          kondisi = terjemahkanCuaca(kode);
+      final urlGeo = Uri.parse(
+        "https://geocoding-api.open-meteo.com/v1/search?name=$namaKota&count=1&language=id&format=json",
+      );
+      final responGeo = await http.get(urlGeo);
 
-          listSuhuMax = data['daily']['temperature_2m_max'];
-        });
+      if (responGeo.statusCode == 200) {
+        final dataGeo = jsonDecode(responGeo.body);
+        if (dataGeo['results'] != null) {
+          double lat = dataGeo['results'][0]['latitude'];
+          double lon = dataGeo['results'][0]['longitude'];
+
+          final urlCuaca = Uri.parse(
+            "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&daily=weathercode,temperature_2m_max&timezone=auto",
+          );
+
+          final responCuaca = await http.get(urlCuaca);
+          if (responCuaca.statusCode == 200) {
+            final data = jsonDecode(responCuaca.body);
+            setState(() {
+              suhu = "${data['current_weather']['temperature']}°C";
+              int kode = data['current_weather']['weathercode'];
+              kondisi = terjemahkanCuaca(kode);
+              listSuhuMax = data['daily']['temperature_2m_max'];
+            });
+          }
+        }
       }
     } catch (e) {
-      setState(() {
-        suhu = "29°C";
-      });
-      print("Eror koneksi: $e");
+      print("Error: $e");
     }
   }
 
@@ -291,7 +300,7 @@ class _DashboardFinalPageState extends State<DashboardFinalPage>
   @override
   void initState() {
     super.initState();
-    ambilDataCuaca();
+    ambilDataCuaca("Pamekasan");
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
@@ -359,7 +368,14 @@ class _DashboardFinalPageState extends State<DashboardFinalPage>
                 decoration: InputDecoration(
                   hintText: "Masukkan nama kota...",
                   hintStyle: TextStyle(color: Colors.white70),
-                  prefixIcon: Icon(Icons.search, color: Colors.white),
+                  prefixIcon: IconButton(
+                    icon: const Icon(Icons.search, color: Colors.white),
+                    onPressed: () {
+                      if (_kotaController.text.isNotEmpty) {
+                        ambilDataCuaca(_kotaController.text);
+                      }
+                    },
+                  ),
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.2),
                   border: OutlineInputBorder(
@@ -367,8 +383,8 @@ class _DashboardFinalPageState extends State<DashboardFinalPage>
                     borderSide: BorderSide.none,
                   ),
                 ),
-                onSubmitted: (value) =>
-                    ambilDataCuaca(), // Berfungsi saat tekan enter
+                onSubmitted: (value) => ambilDataCuaca(value),
+                // Berfungsi saat tekan enter
               ),
             ),
             SizedBox(height: 40),
