@@ -240,6 +240,16 @@ class _DashboardFinalPageState extends State<DashboardFinalPage>
     return Icons.cloud;
   }
 
+  String terjemahkanCuaca(int code) {
+    if (code == 0) return "Cerah";
+    if (code >= 1 && code <= 3) return "Cerah Berawan";
+    if (code >= 45 && code <= 48) return "Berkabut";
+    if (code >= 51 && code <= 67) return "Gerimis/Hujan";
+    if (code >= 80 && code <= 82) return "Hujan Deras";
+    if (code >= 95 && code <= 99) return "Badai Petir";
+    return "Berawan";
+  }
+
   Color ambilWarna(String suhuTeks) {
     double nilaiSuhu = double.tryParse(suhuTeks.replaceAll('°C', '')) ?? 0;
     return nilaiSuhu > 30 ? Colors.orangeAccent : Colors.lightBlueAccent;
@@ -257,6 +267,8 @@ class _DashboardFinalPageState extends State<DashboardFinalPage>
         final data = jsonDecode(respon.body);
         setState(() {
           suhu = "${data['current_weather']['temperature']}°C";
+          int kode = data['current_weather']['weathercode'];
+          kondisi = terjemahkanCuaca(kode);
 
           listSuhuMax = data['daily']['temperature_2m_max'];
         });
