@@ -215,6 +215,8 @@ class _DashboardFinalPageState extends State<DashboardFinalPage>
     with SingleTickerProviderStateMixin {
   String suhu = "...";
   String kondisi = "Memuat data...";
+  List<dynamic> listSuhuMax = [];
+  List<dynamic> listHari = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
   double ukuranIkon = 100;
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -245,24 +247,25 @@ class _DashboardFinalPageState extends State<DashboardFinalPage>
 
   // 2. FUNGSI AMBIL DATA CUACA
   Future<void> ambilDataCuaca() async {
-    // Latitude & Longitude Pamekasan (Default)
     final url = Uri.parse(
-      "https://api.open-meteo.com/v1/forecast?latitude=-7.15&longitude=113.48&current_weather=true",
+      "https://api.open-meteo.com/v1/forecast?latitude=-7.15&longitude=113.48&current_weather=true&daily=temperature_2m_max&timezone=auto",
     );
+
     try {
       final respon = await http.get(url);
       if (respon.statusCode == 200) {
         final data = jsonDecode(respon.body);
         setState(() {
           suhu = "${data['current_weather']['temperature']}°C";
-          kondisi = "Cerah Berawan";
+
+          listSuhuMax = data['daily']['temperature_2m_max'];
         });
       }
     } catch (e) {
       setState(() {
-        suhu = "29°C"; // Cadangan jika internet bermasalah
-        kondisi = "Cerah Berawan";
+        suhu = "29°C";
       });
+      print("Eror koneksi: $e");
     }
   }
 
@@ -450,16 +453,19 @@ class _DashboardFinalPageState extends State<DashboardFinalPage>
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
-              child: Row(
-                children: [
-                  _itemRamalan("Sen", Icons.wb_sunny, "29°"),
-                  _itemRamalan("Sel", Icons.cloud, "27°"),
-                  _itemRamalan("Rab", Icons.water_drop, "25°"),
-                  _itemRamalan("Kam", Icons.thunderstorm, "24"),
-                  _itemRamalan("jum", Icons.wb_cloudy, "26°"),
-                  _itemRamalan("Sab", Icons.cloud_queue, "28°"),
-                  _itemRamalan("Min", Icons.wb_sunny, "30°"),
-                ],
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: listSuhuMax.isEmpty
+                      ? [const CircularProgressIndicator(color: Colors.white)]
+                      : List.generate(listSuhuMax.length, (index) {
+                          return _itemRamalan(
+                            listHari[index],
+                            Icons.wb_cloudy,
+                            "${listSuhuMax[index]}°",
+                          );
+                        }),
+                ),
               ),
             ), // Baris 464: Penutup SingleChildScrollView (Ramalan)
           ], // Baris 465: Penutup Column Utama
