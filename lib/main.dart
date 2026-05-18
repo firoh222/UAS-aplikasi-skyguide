@@ -23,10 +23,11 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.lightBlueAccent,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.cloud, size: 80, color: Colors.white),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.cloud, size: 80, color: Colors.white),
             const Text(
               "SkyGuide v0.1",
               style: TextStyle(
@@ -68,6 +69,7 @@ class LoginPage extends StatelessWidget {
             ),
           ],
         ),
+        ),
       ),
     );
   }
@@ -82,17 +84,19 @@ class DashboardPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("SkyGuide Dashboard")),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("Halo, $namaUser!", style: const TextStyle(fontSize: 22)),
-            const Icon(Icons.wb_sunny, size: 100, color: Colors.orange),
-            const Text(
-              "32°C",
-              style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-            ),
-            const Text("Cerah Berawan"),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Halo, $namaUser!", style: const TextStyle(fontSize: 22)),
+              const Icon(Icons.wb_sunny, size: 100, color: Colors.orange),
+              const Text(
+                "32°C",
+                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+              ),
+              const Text("Cerah Berawan"),
+            ],
+          ),
         ),
       ),
     );
@@ -175,28 +179,30 @@ class _DashboardRealTimePageState extends State<DashboardRealtimePage> {
         backgroundColor: Colors.blueAccent,
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Halo, ${widget.namaUser}!",
-              style: const TextStyle(fontSize: 22),
-            ),
-            Text(tanggalLengkap, style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 20),
-            const Icon(Icons.cloud_queue, size: 100, color: Colors.blue),
-            Text(
-              suhu,
-              style: const TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
-            ),
-            Text(kondisi, style: const TextStyle(fontSize: 20)),
-            const SizedBox(height: 30),
-            ElevatedButton.icon(
-              onPressed: ambilDataCuaca,
-              icon: const Icon(Icons.refresh),
-              label: const Text("Update Cuaca"),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Halo, ${widget.namaUser}!",
+                style: const TextStyle(fontSize: 22),
+              ),
+              Text(tanggalLengkap, style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 20),
+              const Icon(Icons.cloud_queue, size: 100, color: Colors.blue),
+              Text(
+                suhu,
+                style: const TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
+              ),
+              Text(kondisi, style: const TextStyle(fontSize: 20)),
+              const SizedBox(height: 30),
+              ElevatedButton.icon(
+                onPressed: ambilDataCuaca,
+                icon: const Icon(Icons.refresh),
+                label: const Text("Update Cuaca"),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -355,6 +361,7 @@ class _DashboardFinalPageState extends State<DashboardFinalPage>
         elevation: 0,
       ),
       body: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         // Agar tidak error saat keyboard muncul
         child: Column(
           children: [
@@ -483,6 +490,7 @@ class _DashboardFinalPageState extends State<DashboardFinalPage>
               physics: const BouncingScrollPhysics(),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
+                physics: const ClampingScrollPhysics(),
                 child: Row(
                   children: listSuhuMax.isEmpty
                       ? [const CircularProgressIndicator(color: Colors.white)]
@@ -495,6 +503,9 @@ class _DashboardFinalPageState extends State<DashboardFinalPage>
                         }),
                 ),
               ),
+            ),
+            const SizedBox(
+              height: 300,
             ), // Baris 464: Penutup SingleChildScrollView (Ramalan)
           ], // Baris 465: Penutup Column Utama
         ), // Baris 466: Penutup SingleChildScrollView (Layar Utama)

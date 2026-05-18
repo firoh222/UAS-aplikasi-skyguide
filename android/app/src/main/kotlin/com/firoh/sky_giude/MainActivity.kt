@@ -1,4 +1,4 @@
-package com.example.sky_giude
+package com.firoh.sky_giude
 
 import io.flutter.embedding.android.FlutterActivity
 
